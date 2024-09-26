@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
-import * as Parser from 'rss-parser';
+import { parseString } from 'xml2js';
+import { promisify } from 'util';
 import { TrendingUp, TrendingDown, Clock } from 'lucide-react';
 
 // Styled components (остаются без изменений)
 const OverlayContainer = styled.div`
   position: relative;
-  width: 100vw;
-  height: 100vh;
+  width: 98vw;
+  height: 96vh;
   color: white;
   font-family: Arial, sans-serif;
   background-color: transparent;
@@ -58,13 +59,25 @@ const VideoPlaceholder = styled.div`
   font-size: 24px;
 `;
 
+//decoder
+function decodeHTMLEntities(text: string) {
+  const textArea = document.createElement('textarea');
+  textArea.innerHTML = text;
+  return textArea.value;
+}
 // RSS parser
-
+const parseXml = promisify(parseString);
 // Function to fetch RSS feed
 const fetchRssFeed = async () => {
-    const parser = new Parser();
-    const feed = await parser.parseURL('https://feeds.bloomberg.com/markets/news.rss');
-    return feed.items.map(item => item.title);
+  try {
+    const response = await axios.get('/rss');
+    const result = await parseXml(response.data);
+    
+    return result.rss.channel[0].item.map((item: any) => decodeHTMLEntities(item.title[0]));
+  } catch (error) {
+    console.error('Error fetching RSS feed:', error);
+    return [];
+  }
 };
 
 // Function to fetch stock quotes
@@ -74,12 +87,12 @@ const fetchQuotes = async () => {
 
   for (const symbol of symbols) {
     try {
-      const response = await axios.get(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=YOUR_ALPHA_VANTAGE_API_KEY`);
-      const data = response.data['Global Quote'];
+      const response = await axios.get(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=J06PNWJTCWD9R8BV`);
+      const data = response.data?.['Global Quote'];
       quotes.push({
-        symbol: data['01. symbol'],
-        price: parseFloat(data['05. price']),
-        change: parseFloat(data['10. change percent'].replace('%', ''))
+        symbol: data?.['01. symbol'],
+        price: parseFloat(data?.['05. price']),
+        change: parseFloat(data?.['10. change percent'].replace('%', ''))
       });
     } catch (error) {
       console.error(`Error fetching data for ${symbol}:`, error);
@@ -89,19 +102,28 @@ const fetchQuotes = async () => {
   return quotes;
 };
 
+
 const PodcastOverlay: React.FC = () => {
   const [news, setNews] = useState<string[]>([]);
   const [quotes, setQuotes] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchNews = async () => {
-      const newsItems = await fetchRssFeed();
-      setNews(newsItems);
+      try {
+        const newsItems = await fetchRssFeed();
+        setNews(newsItems);
+      } catch (error) {
+        console.error('Error fetching news:', error);
+      }
     };
 
     const fetchStockQuotes = async () => {
-      const quoteData = await fetchQuotes();
-      setQuotes(quoteData);
+      try {
+        const quoteData = await fetchQuotes();
+        setQuotes(quoteData);
+      } catch (error) {
+        console.error('Error fetching quotes:', error);
+      }
     };
 
     fetchNews();
