@@ -1,4 +1,4 @@
-import PodcastOverlay from './components/podcastOverlay/PodcastOverlay';
+import PodcastOverlay from './components/PodcastOverlay';
 import { createGlobalStyle } from 'styled-components';
 
 const GlobalStyle = createGlobalStyle`
