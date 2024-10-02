@@ -26,6 +26,12 @@ export default defineConfig({
             '/rss/2.0/headline?s=^GSPC,^DJI,^IXIC&region=US&lang=en-US',
           ),
       },
+      '/rss_habr': {
+        target: 'https://habr.com/ru',
+        changeOrigin: true,
+        rewrite: (path) =>
+          path.replace(/^\/rss/, '/rss/articles/top/daily/?fl=ru'),
+      },
     },
   },
 });

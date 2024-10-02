@@ -10,26 +10,18 @@ export const Ticker = styled.div<{ $bottom?: string }>`
   overflow: hidden;
 `;
 
-export const TopTickerContent = styled.div`
-  display: inline-flex;
-  white-space: nowrap;
-  padding-right: 100%;
-  animation: marquee 350s linear infinite;
-
-  @keyframes marquee {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-100%); }
-  }
-`;
-
 export const BottomTickerContent = styled.div`
   display: inline-flex;
   white-space: nowrap;
   padding-right: 100%;
-  animation: marquee 90s linear infinite;
+  animation: marquee linear infinite;
 
   @keyframes marquee {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-100%); }
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
   }
 `;

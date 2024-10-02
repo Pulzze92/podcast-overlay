@@ -6,10 +6,19 @@ const apiKeyMarketStack = import.meta.env.MARKET_STACK_API_KEY;
 const BASE_URL_MS = 'http://api.marketstack.com/v1';
 
 const SYMBOLS = [
-  'AAPL', 'GOOGL', 'MSFT', 'AMZN', 'FB', // Голубые фишки
-  'EURUSD', 'GBPUSD', 'USDJPY', // Валюты
-  'GOLD', 'SILVER', 'OIL', // Товары
-  'BTCUSD', 'ETHUSD' // Криптовалюты
+  'AAPL',
+  'GOOGL',
+  'MSFT',
+  'AMZN',
+  'FB', // Голубые фишки
+  'EURUSD',
+  'GBPUSD',
+  'USDJPY', // Валюты
+  'GOLD',
+  'SILVER',
+  'OIL', // Товары
+  'BTCUSD',
+  'ETHUSD', // Криптовалюты
 ];
 
 interface Quote {
